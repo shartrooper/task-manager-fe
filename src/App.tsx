@@ -4,8 +4,7 @@ import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import LandingPage from "./features/LandingPage";
 import { useEffect } from "react";
-import { setupAxiosInterceptors } from "./lib/axios";
-import LogoutButton from "./components/LogoutButton";
+import Dashboard from "./features/Dashboard";
 
 const theme = createTheme({
   // https://mui.com/material-ui/customization/theming/
@@ -17,7 +16,7 @@ function MainPageWrapper() {
   useEffect(() => {
     const setAccessToken = async () => {
       const accessToken = await getAccessTokenSilently();
-      setupAxiosInterceptors(accessToken);
+      localStorage.setItem("auth-token", accessToken);
     };
 
     if (isAuthenticated) {
@@ -25,17 +24,7 @@ function MainPageWrapper() {
     }
   }, [getAccessTokenSilently, isAuthenticated]);
 
-  return (
-    <div>
-      {!isAuthenticated ? (
-        <LandingPage />
-      ) : (
-        <div>
-          <LogoutButton />
-        </div>
-      )}
-    </div>
-  );
+  return <div>{!isAuthenticated ? <LandingPage /> : <Dashboard />}</div>;
 }
 
 function App() {
