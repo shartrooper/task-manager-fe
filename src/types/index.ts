@@ -1,0 +1,1 @@
+export type PagePath = 'large-page';
