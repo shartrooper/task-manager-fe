@@ -11,6 +11,7 @@ import TaskCard from "./TaskCard";
 import TaskModal from "./TaskModal";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { LogoutButton } from "@/components";
 
 const Dashboard = () => {
   const { user } = useAuth0();
@@ -52,9 +53,12 @@ const Dashboard = () => {
           mb: 3,
         }}
       >
-        <Typography variant="h6" color="white">
-          Logged in as: {user?.name ?? ""}
-        </Typography>
+        <div className="flex">
+          <Typography variant="h6" color="white">
+            Logged in as: {user?.name ?? ""}
+          </Typography>
+          <LogoutButton />
+        </div>
         <Button
           variant="contained"
           color="primary"
