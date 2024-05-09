@@ -10,14 +10,16 @@ import {
 import TaskCard from "./TaskCard";
 import TaskModal from "./TaskModal";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Dashboard = () => {
   const { user } = useAuth0();
   const [modalOpen, setModalOpen] = useState(false);
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
   const { data: tasks, isLoading, error } = useTasks();
-  const createTask = useCreateTask();
-  const updateTask = useUpdateTask();
+  const queryClient = useQueryClient();
+  const createTask = useCreateTask(queryClient);
+  const updateTask = useUpdateTask(queryClient);
 
   const handleOpenModal = (task: Task) => {
     setCurrentTask(task);
@@ -53,11 +55,15 @@ const Dashboard = () => {
         <Typography variant="h6" color="white">
           Logged in as: {user?.name ?? ""}
         </Typography>
-        <Button variant="contained" color="primary">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setModalOpen(true)}
+        >
           Create Task
         </Button>
       </Box>
-      {tasks?.data.map((task) => (
+      {tasks?.map((task) => (
         <TaskCard
           key={task.id}
           task={task}

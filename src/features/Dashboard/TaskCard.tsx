@@ -6,6 +6,7 @@ import {
   CardActions,
   Button,
 } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import React from "react";
 
 type TaskCardProps = {
@@ -54,8 +55,9 @@ const TaskCardContainer: React.FC<{ task: Task; onEdit: () => void }> = ({
   task,
   onEdit,
 }) => {
-  const deleteTask = useDeleteTask(task.id);
-  const toggleTaskDone = useToggleTaskDone(task.id);
+  const queryClient = useQueryClient();
+  const deleteTask = useDeleteTask(task.id, queryClient);
+  const toggleTaskDone = useToggleTaskDone(task.id, queryClient);
 
   const handleEdit = () => {
     onEdit();

@@ -1,6 +1,9 @@
-// src/api.ts
 import { axios } from "@/lib/axios";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+} from "@tanstack/react-query";
 import {
   ExtractFnReturnType,
   QueryConfig,
@@ -14,7 +17,7 @@ export interface Task {
   isDone: boolean;
 }
 
-export const fetchTasks = (): Promise<{ data: Task[] }> => {
+export const fetchTasks = (): Promise<Task[]> => {
   return axios.get("/tasks");
 };
 
@@ -67,21 +70,29 @@ export const updateTask = (data: EditTaskDTO): Promise<{ data: Task }> => {
   return axios.patch(`/tasks/${data.id}`, data);
 };
 
-export const useCreateTask = (config?: MutationConfig<typeof createTask>) => {
+export const useCreateTask = (
+  queryClient: QueryClient,
+  config?: MutationConfig<typeof createTask>
+) => {
   return useMutation({
     mutationFn: createTask,
     onSuccess: () => {
       alert("Task successfully created!");
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
     ...config,
   });
 };
 
-export const useUpdateTask = (config?: MutationConfig<typeof updateTask>) => {
+export const useUpdateTask = (
+  queryClient: QueryClient,
+  config?: MutationConfig<typeof updateTask>
+) => {
   return useMutation({
     mutationFn: updateTask,
     onSuccess: () => {
       alert("Task successfully updated!");
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
     ...config,
   });
@@ -91,11 +102,12 @@ export const toggleTaskDone = (taskId: string): Promise<{ data: Task }> => {
   return axios.patch(`/tasks/${taskId}/toggleDone`);
 };
 
-export const useToggleTaskDone = (taskId: string) => {
+export const useToggleTaskDone = (taskId: string, queryClient: QueryClient) => {
   return useMutation({
     mutationFn: () => toggleTaskDone(taskId),
     onSuccess: () => {
       alert(`Task status toggled successfully!`);
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
 };
@@ -104,11 +116,12 @@ export const deleteTask = (taskId: string): Promise<void> => {
   return axios.delete(`/tasks/${taskId}`);
 };
 
-export const useDeleteTask = (taskId: string) => {
+export const useDeleteTask = (taskId: string, queryClient: QueryClient) => {
   return useMutation({
     mutationFn: () => deleteTask(taskId),
     onSuccess: () => {
       alert(`Task deleted successfully!`);
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
 };
